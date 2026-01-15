@@ -34,10 +34,12 @@ type Task struct {
 	UpdatedAt   time.Time
 }
 
-func (task Task) Id() shared.Id {
-	return task.id
+type TaskDto struct {
+	Id          shared.Id   `json:"id"`
+	Description string      `json:"description"`
+	Status      StatusState `json:"status"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
-func (task Task) CreatedAt() time.Time {
-	return task.createdAt
-}
+
