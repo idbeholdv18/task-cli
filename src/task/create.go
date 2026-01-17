@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func CreateTask(tasks []Task, description string) *Task {
+func CreateTask(tasks []*Task, description string) *Task {
 	return &Task{
 		id:          CalculateMaxId(tasks).Next(),
 		Description: description,

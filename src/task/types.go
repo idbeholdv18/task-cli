@@ -14,16 +14,16 @@ const (
 	StateDone
 )
 
-var stateName = map[StatusState]string{
-	StateBacklog:    "Backlog",
-	StateReady:      "Ready",
-	StateInProgress: "In Progress",
-	StateDone:       "Done",
+var StateName = map[StatusState]string{
+	StateBacklog:    "backlog",
+	StateReady:      "ready",
+	StateInProgress: "wip",
+	StateDone:       "done",
 }
 
 // implementing Stringer interface
 func (statusState StatusState) String() string {
-	return stateName[statusState]
+	return StateName[statusState]
 }
 
 type Task struct {
@@ -41,5 +41,3 @@ type TaskDto struct {
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
-
-

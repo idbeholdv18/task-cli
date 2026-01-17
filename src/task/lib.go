@@ -27,18 +27,18 @@ func TaskFromDto(dto TaskDto) Task {
 	}
 }
 
-func CalculateMaxId(tasks []Task) shared.Id {
+func CalculateMaxId(tasks []*Task) shared.Id {
 	if len(tasks) == 0 {
 		return shared.CreateId(0)
 	}
 	max := tasks[0].id
 	for _, task := range tasks {
-		max = task.id.Compare(max)
+		max = task.id.Max(max)
 	}
 	return max
 }
 
-func ReadFromJson(path string) []Task {
+func ReadFromJson(path string) []*Task {
 	content, err := os.ReadFile(path)
 
 	if err != nil {
@@ -48,10 +48,11 @@ func ReadFromJson(path string) []Task {
 	var dtos []TaskDto
 	err = json.Unmarshal(content, &dtos)
 
-	tasks := make([]Task, 0, len(dtos))
+	tasks := make([]*Task, 0, len(dtos))
 
 	for _, dto := range dtos {
-		tasks = append(tasks, TaskFromDto(dto))
+		taskFromDto := TaskFromDto(dto)
+		tasks = append(tasks, &taskFromDto)
 	}
 
 	if err != nil {
@@ -61,7 +62,7 @@ func ReadFromJson(path string) []Task {
 	return tasks
 }
 
-func WriteToJson(path string, tasks []Task) {
+func WriteToJson(path string, tasks []*Task) {
 	dtos := make([]TaskDto, 0, len(tasks))
 
 	for _, task := range tasks {
@@ -79,4 +80,13 @@ func WriteToJson(path string, tasks []Task) {
 	if err != nil {
 		log.Fatal("error during writing file: ", err)
 	}
+}
+
+func FindTaskById(tasks []*Task, id shared.Id) *Task {
+	for _, task := range tasks {
+		if task.id.Compare(id) == shared.Equal {
+			return task
+		}
+	}
+	return nil
 }
