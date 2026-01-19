@@ -10,10 +10,6 @@ const (
 	Greater = 1
 )
 
-func CreateId(payload int) Id {
-	return Id(payload)
-}
-
 func (id Id) Next() Id {
 	return Id(int(id) + 1)
 }

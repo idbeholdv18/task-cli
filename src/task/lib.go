@@ -29,7 +29,7 @@ func TaskFromDto(dto TaskDto) Task {
 
 func CalculateMaxId(tasks []*Task) shared.Id {
 	if len(tasks) == 0 {
-		return shared.CreateId(0)
+		return shared.Id(0)
 	}
 	max := tasks[0].id
 	for _, task := range tasks {
