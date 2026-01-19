@@ -2,47 +2,32 @@ package commands
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"task-cli/src/config"
 	"task-cli/src/shared"
 	"task-cli/src/task"
 )
 
-func deleteTask(tasks []*task.Task, id int) []*task.Task {
-	candidate := task.FindTaskById(tasks, shared.Id(id))
-	if candidate == nil {
-		fmt.Fprintf(os.Stderr, "task with id %d not found\n", id)
-		return tasks
-	}
-	filteredTasks := make([]*task.Task, 0, len(tasks)-1)
-	for _, task := range tasks {
-		if candidate != task {
-			filteredTasks = append(filteredTasks, task)
-		}
-	}
-	return filteredTasks
-}
-
-func Delete(tasks []*task.Task, argv []string) {
-	if len(os.Args) < 3 {
-		fmt.Fprintf(os.Stderr, "update usage: task-cli delete <id[]>\n")
-		return
+func Delete(tasks task.Tasks, argv []string) error {
+	if len(argv) != 1 {
+		return fmt.Errorf("delete usage: task-cli delete <id>\n")
 	}
 
-	ids := make([]int, 0, len(argv))
+	id, err := strconv.Atoi(argv[0])
 
-	for _, candidate := range argv {
-		id, err := strconv.Atoi(candidate)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "error during parsing id: %v\n", err)
-			os.Exit(2)
-		}
-		ids = append(ids, id)
+	if err != nil {
+		return fmt.Errorf("parse id: %w\n", err)
 	}
 
-	for _, id := range ids {
-		tasks = deleteTask(tasks, id)
+	tasks, err = tasks.Delete(shared.Id(id))
+
+	if err != nil {
+		return err
 	}
-	task.WriteToJson(config.FILENAME, tasks)
+
+	if err := task.WriteToJson(config.FILENAME, tasks); err != nil {
+		return err
+	}
+
+	return nil
 }

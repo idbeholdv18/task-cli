@@ -2,6 +2,7 @@ package task
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"task-cli/src/shared"
@@ -38,7 +39,7 @@ func CalculateMaxId(tasks []*Task) shared.Id {
 	return max
 }
 
-func ReadFromJson(path string) []*Task {
+func ReadFromJson(path string) Tasks {
 	content, err := os.ReadFile(path)
 
 	if err != nil {
@@ -62,24 +63,24 @@ func ReadFromJson(path string) []*Task {
 	return tasks
 }
 
-func WriteToJson(path string, tasks []*Task) {
+func WriteToJson(path string, tasks Tasks) error {
 	dtos := make([]TaskDto, 0, len(tasks))
 
 	for _, task := range tasks {
-		dtos = append(dtos, task.ToDto())
+		dtos = append(dtos, (*task).ToDto())
 	}
 
 	encoded, err := json.Marshal(dtos)
 
 	if err != nil {
-		log.Fatal("error during marshal: ", err)
+		return fmt.Errorf("error during marshal: %v", err)
 	}
 
-	err = os.WriteFile(path, encoded, 0644)
-
-	if err != nil {
-		log.Fatal("error during writing file: ", err)
+	if err := os.WriteFile(path, encoded, 0644); err != nil {
+		return fmt.Errorf("error during writing file: %v", err)
 	}
+
+	return nil
 }
 
 func FindTaskById(tasks []*Task, id shared.Id) *Task {

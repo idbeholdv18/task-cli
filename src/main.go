@@ -33,7 +33,10 @@ func main() {
 		}
 	case "delete":
 		{
-			commands.Delete(tasks, args)
+			if err := commands.Delete(tasks, args); err != nil {
+				fmt.Fprintf(os.Stderr, "delete error: %s", err)
+				os.Exit(2)
+			}
 		}
 	case "mark":
 		{

@@ -34,6 +34,8 @@ type Task struct {
 	UpdatedAt   time.Time
 }
 
+type Tasks []*Task
+
 type TaskDto struct {
 	Id          shared.Id   `json:"id"`
 	Description string      `json:"description"`
