@@ -4,22 +4,22 @@ import (
 	"fmt"
 	"strconv"
 	"task-cli/src/config"
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 	"task-cli/src/task"
 )
 
 func Delete(tasks task.Tasks, argv []string) error {
 	if len(argv) != 1 {
-		return fmt.Errorf("delete usage: task-cli delete <id>\n")
+		return fmt.Errorf("delete usage: task-cli delete <id>")
 	}
 
 	id, err := strconv.Atoi(argv[0])
 
 	if err != nil {
-		return fmt.Errorf("parse id: %w\n", err)
+		return fmt.Errorf("parse id: %w", err)
 	}
 
-	tasks, err = tasks.Delete(shared.Id(id))
+	tasks, err = tasks.Delete(ids.Id(id))
 
 	if err != nil {
 		return err

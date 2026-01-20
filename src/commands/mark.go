@@ -2,46 +2,48 @@ package commands
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"task-cli/src/config"
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 	"task-cli/src/task"
 )
 
-func Mark(tasks []*task.Task, argv []string) {
+func Mark(tasks task.Tasks, argv []string) error {
 	if len(argv) != 2 {
-		fmt.Fprintf(os.Stderr, "update usage: task-cli mark <id> [ready|wip|done]\n")
-		os.Exit(2)
+		return fmt.Errorf("update usage: task-cli mark <id> [backlog|ready|wip|done]")
 	}
-	id, err := strconv.Atoi(os.Args[2])
+
+	id, err := strconv.Atoi(argv[0])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error during parsing id: %v\n", err)
-		os.Exit(2)
+		return fmt.Errorf("error during parsing id: %w", err)
 	}
-	candidate := task.FindTaskById(tasks, shared.Id(id))
-	if candidate == nil {
-		fmt.Fprintf(os.Stderr, "task with id %d not found\n", id)
-		os.Exit(2)
-	}
-	switch os.Args[3] {
+
+	switch argv[1] {
+	case task.StateName[task.StateBacklog]:
+		{
+			tasks.Mark(ids.Id(id), task.StateBacklog)
+		}
 	case task.StateName[task.StateReady]:
 		{
-			candidate.Status = task.StateReady
+			tasks.Mark(ids.Id(id), task.StateReady)
 		}
 	case task.StateName[task.StateInProgress]:
 		{
-			candidate.Status = task.StateInProgress
+			tasks.Mark(ids.Id(id), task.StateInProgress)
 		}
 	case task.StateName[task.StateDone]:
 		{
-			candidate.Status = task.StateDone
+			tasks.Mark(ids.Id(id), task.StateDone)
 		}
 	default:
 		{
-			fmt.Fprintf(os.Stderr, "mark usage: task-cli mark <id> [ready|wip|done]")
-			os.Exit(2)
+			return fmt.Errorf("mark usage: task-cli mark <id> [backlog|ready|wip|done]")
 		}
 	}
-	task.WriteToJson(config.FILENAME, tasks)
+
+	if err := task.WriteToJson(config.FILENAME, tasks); err != nil {
+		return err
+	}
+
+	return nil
 }

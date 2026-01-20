@@ -22,7 +22,7 @@ func main() {
 	case "add":
 		{
 			if err := commands.Add(tasks, args); err != nil {
-				fmt.Fprintf(os.Stderr, "add error: %s", err)
+				fmt.Fprintf(os.Stderr, "add error: %s\n", err)
 				os.Exit(2)
 			}
 		}
@@ -32,18 +32,24 @@ func main() {
 		}
 	case "update":
 		{
-			commands.Update(tasks, args)
+			if err := commands.Update(tasks, args); err != nil {
+				fmt.Fprintf(os.Stderr, "update error: %s\n", err)
+				os.Exit(2)
+			}
 		}
 	case "delete":
 		{
 			if err := commands.Delete(tasks, args); err != nil {
-				fmt.Fprintf(os.Stderr, "delete error: %s", err)
+				fmt.Fprintf(os.Stderr, "delete error: %s\n", err)
 				os.Exit(2)
 			}
 		}
 	case "mark":
 		{
-			commands.Mark(tasks, args)
+			if err := commands.Mark(tasks, args); err != nil {
+				fmt.Fprintf(os.Stderr, "mark error: %s\n", err)
+				os.Exit(2)
+			}
 		}
 	default:
 		{

@@ -2,28 +2,33 @@ package commands
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"task-cli/src/config"
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 	"task-cli/src/task"
 )
 
-func Update(tasks []*task.Task, argv []string) {
-	if len(argv) != 3 {
-		fmt.Fprintf(os.Stderr, "update usage: task-cli update <id> <new description>")
-		return
+func Update(tasks task.Tasks, argv []string) error {
+	if len(argv) != 2 {
+		return fmt.Errorf("update usage: task-cli update <id> <new description>")
 	}
-	id, err := strconv.Atoi(os.Args[2])
+
+	id, err := strconv.Atoi(argv[0])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error during parsing id: %v\n", err)
-		os.Exit(2)
+		return fmt.Errorf("error during parsing id: %w", err)
 	}
-	candidate := task.FindTaskById(tasks, shared.Id(id))
-	if candidate == nil {
-		fmt.Fprintf(os.Stderr, "task with id %d not found\n", id)
-		os.Exit(1)
+
+	description := argv[1]
+
+	err = tasks.Update(ids.Id(id), description)
+
+	if err != nil {
+		return fmt.Errorf("update error: %w", err)
 	}
-	candidate.Description = os.Args[3]
-	task.WriteToJson(config.FILENAME, tasks)
+
+	if err := task.WriteToJson(config.FILENAME, tasks); err != nil {
+		return fmt.Errorf("write error: %w", err)
+	}
+
+	return nil
 }

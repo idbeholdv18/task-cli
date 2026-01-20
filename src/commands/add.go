@@ -8,7 +8,7 @@ import (
 
 func Add(tasks task.Tasks, argv []string) error {
 	if len(argv) != 1 {
-		return fmt.Errorf("add usage: task-cli add <description>\n")
+		return fmt.Errorf("add usage: task-cli add <description>")
 	}
 
 	description := argv[0]

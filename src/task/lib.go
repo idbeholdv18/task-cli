@@ -40,7 +40,7 @@ func (tasks Tasks) FindMaxId() ids.Id {
 		return -1
 	}
 	max := tasks[0].id
-	for _, task := range tasks {
+	for _, task := range tasks[1:] {
 		if task.id.Compare(max) == ids.Greater {
 			max = task.id
 		}
