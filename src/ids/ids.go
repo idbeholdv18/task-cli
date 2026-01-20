@@ -1,26 +1,20 @@
-package shared
+package ids
 
 type Id int
 
 type CompareResult int
 
-const (
-	Less    = -1
-	Equal   = 0
-	Greater = 1
-)
+const Less, Equal, Greater = -1, 0, 1
 
 func (id Id) Next() Id {
 	return Id(int(id) + 1)
 }
 
-func (a Id) Max(b Id) Id {
-	if int(a) >= int(b) {
-		return a
-	}
-	return b
-}
-
+// Returns the result of comparing a and b:
+//
+//   - a < b: 	returns ids.Less
+//   - a == b: 	returns ids.Equal
+//   - a > b: 	returns ids.Greater
 func (a Id) Compare(b Id) CompareResult {
 	if a < b {
 		return Less

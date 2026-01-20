@@ -2,10 +2,10 @@ package task
 
 import (
 	"fmt"
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 )
 
-func (tasks Tasks) Delete(id shared.Id) (Tasks, error) {
+func (tasks Tasks) Delete(id ids.Id) (Tasks, error) {
 	n := tasks.FindIndex(id)
 	if n == -1 {
 		return nil, fmt.Errorf("task with id %d not found\n", id)

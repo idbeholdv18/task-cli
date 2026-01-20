@@ -21,7 +21,10 @@ func main() {
 	switch os.Args[1] {
 	case "add":
 		{
-			commands.Add(tasks, args)
+			if err := commands.Add(tasks, args); err != nil {
+				fmt.Fprintf(os.Stderr, "add error: %s", err)
+				os.Exit(2)
+			}
 		}
 	case "list":
 		{

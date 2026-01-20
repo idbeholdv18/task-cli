@@ -1,7 +1,7 @@
 package task
 
 import (
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 	"time"
 )
 
@@ -27,17 +27,18 @@ func (statusState StatusState) String() string {
 }
 
 type Task struct {
-	id          shared.Id
+	id          ids.Id
 	Description string
 	Status      StatusState
 	createdAt   time.Time
 	UpdatedAt   time.Time
 }
 
+// Tasks is a slice of non-nil *Task
 type Tasks []*Task
 
 type TaskDto struct {
-	Id          shared.Id   `json:"id"`
+	Id          ids.Id      `json:"id"`
 	Description string      `json:"description"`
 	Status      StatusState `json:"status"`
 	CreatedAt   time.Time   `json:"created_at"`

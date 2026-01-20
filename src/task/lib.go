@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"task-cli/src/shared"
+	"task-cli/src/ids"
 )
 
 func (task Task) ToDto() TaskDto {
@@ -28,13 +28,22 @@ func TaskFromDto(dto TaskDto) Task {
 	}
 }
 
-func CalculateMaxId(tasks []*Task) shared.Id {
+// FindMaxId the maximum id among all the Task elements
+//
+// If tasks doesn't contain any elements returns -1
+//
+// Although in this instance, it is possible to retrieve the ID of the last element,
+// the function still iterates over the whole slice, as a change in behaviour or data
+// structure could result in the maximum ID not being the last element.
+func (tasks Tasks) FindMaxId() ids.Id {
 	if len(tasks) == 0 {
-		return shared.Id(0)
+		return -1
 	}
 	max := tasks[0].id
 	for _, task := range tasks {
-		max = task.id.Max(max)
+		if task.id.Compare(max) == ids.Greater {
+			max = task.id
+		}
 	}
 	return max
 }
@@ -80,14 +89,5 @@ func WriteToJson(path string, tasks Tasks) error {
 		return fmt.Errorf("error during writing file: %v", err)
 	}
 
-	return nil
-}
-
-func FindTaskById(tasks []*Task, id shared.Id) *Task {
-	for _, task := range tasks {
-		if task.id.Compare(id) == shared.Equal {
-			return task
-		}
-	}
 	return nil
 }
