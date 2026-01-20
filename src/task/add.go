@@ -16,9 +16,9 @@ func createTask(id ids.Id, description string) *Task {
 }
 
 func (tasks Tasks) Add(description string) Tasks {
-	id := tasks.FindMaxId()
+	id, ok := tasks.FindMaxId()
 
-	if id == -1 {
+	if !ok {
 		id = ids.Id(0)
 	} else {
 		id = id.Next()

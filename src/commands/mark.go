@@ -3,10 +3,16 @@ package commands
 import (
 	"fmt"
 	"strconv"
-	"task-cli/src/config"
 	"task-cli/src/ids"
 	"task-cli/src/task"
 )
+
+var stateMap = map[string]task.StatusState{
+	"backlog": task.StateBacklog,
+	"ready":   task.StateReady,
+	"wip":     task.StateInProgress,
+	"done":    task.StateDone,
+}
 
 func Mark(tasks task.Tasks, argv []string) error {
 	if len(argv) != 2 {
@@ -18,31 +24,13 @@ func Mark(tasks task.Tasks, argv []string) error {
 		return fmt.Errorf("error during parsing id: %w", err)
 	}
 
-	switch argv[1] {
-	case task.StateName[task.StateBacklog]:
-		{
-			tasks.Mark(ids.Id(id), task.StateBacklog)
-		}
-	case task.StateName[task.StateReady]:
-		{
-			tasks.Mark(ids.Id(id), task.StateReady)
-		}
-	case task.StateName[task.StateInProgress]:
-		{
-			tasks.Mark(ids.Id(id), task.StateInProgress)
-		}
-	case task.StateName[task.StateDone]:
-		{
-			tasks.Mark(ids.Id(id), task.StateDone)
-		}
-	default:
-		{
-			return fmt.Errorf("mark usage: task-cli mark <id> [backlog|ready|wip|done]")
-		}
+	state, ok := stateMap[argv[1]]
+	if !ok {
+		return fmt.Errorf("mark usage: task-cli mark <id> [backlog|ready|wip|done]")
 	}
 
-	if err := task.WriteToJson(config.FILENAME, tasks); err != nil {
-		return err
+	if err := tasks.Mark(ids.Id(id), state); err != nil {
+		return fmt.Errorf("mark error: %w", err)
 	}
 
 	return nil

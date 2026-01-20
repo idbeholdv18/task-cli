@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"strconv"
-	"task-cli/src/config"
 	"task-cli/src/ids"
 	"task-cli/src/task"
 )
@@ -20,14 +19,8 @@ func Update(tasks task.Tasks, argv []string) error {
 
 	description := argv[1]
 
-	err = tasks.Update(ids.Id(id), description)
-
-	if err != nil {
+	if err := tasks.Update(ids.Id(id), description); err != nil {
 		return fmt.Errorf("update error: %w", err)
-	}
-
-	if err := task.WriteToJson(config.FILENAME, tasks); err != nil {
-		return fmt.Errorf("write error: %w", err)
 	}
 
 	return nil

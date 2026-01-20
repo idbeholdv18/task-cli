@@ -1,7 +1,10 @@
 package commands
 
-import "task-cli/src/task"
+import (
+	"io"
+	"task-cli/src/task"
+)
 
-func List(tasks task.Tasks) {
-	tasks.List()
+func List(w io.Writer, tasks task.Tasks) {
+	tasks.List(w)
 }

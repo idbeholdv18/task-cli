@@ -23,7 +23,10 @@ var StateName = map[StatusState]string{
 
 // implementing Stringer interface
 func (statusState StatusState) String() string {
-	return StateName[statusState]
+	if name, ok := StateName[statusState]; ok {
+		return name
+	}
+	return "unknown"
 }
 
 type Task struct {

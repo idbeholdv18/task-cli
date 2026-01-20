@@ -2,15 +2,15 @@ package task
 
 import (
 	"fmt"
-	"os"
+	"io"
 	"text/tabwriter"
 )
 
-func (tasks Tasks) List() {
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-	fmt.Fprintln(w, "id\tdescription\tstatus\t")
+func (tasks Tasks) List(w io.Writer) {
+	tw := tabwriter.NewWriter(w, 0, 0, 3, ' ', 0)
+	fmt.Fprintln(tw, "id\tdescription\tstatus\t")
 	for _, task := range tasks {
-		fmt.Fprintf(w, "%d\t%s\t%s\t\n", task.id, task.Description, task.Status)
+		fmt.Fprintf(tw, "%d\t%s\t%s\t\n", task.id, task.Description, task.Status)
 	}
-	w.Flush()
+	tw.Flush()
 }
