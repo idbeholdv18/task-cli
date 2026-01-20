@@ -1,9 +1,7 @@
 package commands
 
-import (
-	"task-cli/src/task"
-)
+import "task-cli/src/task"
 
-func List(tasks []*task.Task) {
-	task.ListTasks(tasks)
+func List(tasks task.Tasks) {
+	tasks.List()
 }
