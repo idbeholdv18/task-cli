@@ -2,21 +2,20 @@ package storage
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
 	"os"
 	"task-cli/src/task"
 )
 
-func ReadFromJson(f *os.File) (task.Tasks, error) {
-	if _, err := f.Seek(0, 0); err != nil {
-		return nil, err
-	}
-
-	content, err := io.ReadAll(f)
+func ReadFromJson(path string) (task.Tasks, error) {
+	content, err := os.ReadFile(path)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error during read file: %w", err)
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			return task.Tasks{}, nil
+		}
+		return nil, err
 	}
 
 	if len(content) == 0 {
@@ -38,15 +37,7 @@ func ReadFromJson(f *os.File) (task.Tasks, error) {
 	return tasks, nil
 }
 
-func WriteToJson(f *os.File, tasks task.Tasks) error {
-	if _, err := f.Seek(0, 0); err != nil {
-		return err
-	}
-
-	if err := f.Truncate(0); err != nil {
-		return err
-	}
-
+func WriteToJson(path string, tasks task.Tasks) error {
 	dtos := make([]task.TaskDto, 0, len(tasks))
 
 	for _, task := range tasks {
@@ -59,9 +50,5 @@ func WriteToJson(f *os.File, tasks task.Tasks) error {
 		return fmt.Errorf("error during marshal: %v", err)
 	}
 
-	if _, err := f.Write(encoded); err != nil {
-		return fmt.Errorf("error during writing file: %v", err)
-	}
-
-	return nil
+	return os.WriteFile(path, encoded, 0644)
 }
