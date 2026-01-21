@@ -14,7 +14,14 @@ const (
 )
 
 func main() {
-	tasks, err := storage.ReadFromJson(storageFilename)
+	f, err := GetFile(storageFilename)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "storage file opening error: %v", err)
+		os.Exit(ExitCodeReadWrite)
+	}
+	defer f.Close()
+
+	tasks, err := storage.ReadFromJson(f)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "read error: %v\n", err)
@@ -35,7 +42,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "add error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(f, tasks)
 	case "list":
 		commands.List(os.Stdout, tasks)
 	case "update":
@@ -43,22 +50,30 @@ func main() {
 			fmt.Fprintf(os.Stderr, "update error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(f, tasks)
 	case "delete":
 		tasks, err := commands.Delete(tasks, args)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "delete error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(f, tasks)
 	case "mark":
 		if err := commands.Mark(tasks, args); err != nil {
 			fmt.Fprintf(os.Stderr, "mark error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(f, tasks)
 	default:
 		fmt.Println("usage: task-cli [add|update|delete|mark|list]")
 		os.Exit(ExitCodeUsage)
 	}
+}
+
+func GetFile(filename string) (*os.File, error) {
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
 }
