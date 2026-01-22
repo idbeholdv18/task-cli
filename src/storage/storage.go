@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"task-cli/src/task"
@@ -11,7 +12,14 @@ func ReadFromJson(path string) (task.Tasks, error) {
 	content, err := os.ReadFile(path)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error when opening file: %w", err)
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			return task.Tasks{}, nil
+		}
+		return nil, err
+	}
+
+	if len(content) == 0 {
+		return task.Tasks{}, nil
 	}
 
 	var dtos []task.TaskDto
@@ -42,9 +50,5 @@ func WriteToJson(path string, tasks task.Tasks) error {
 		return fmt.Errorf("error during marshal: %v", err)
 	}
 
-	if err := os.WriteFile(path, encoded, 0644); err != nil {
-		return fmt.Errorf("error during writing file: %v", err)
-	}
-
-	return nil
+	return os.WriteFile(path, encoded, 0644)
 }

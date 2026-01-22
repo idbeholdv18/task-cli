@@ -7,14 +7,14 @@ import (
 	"task-cli/src/storage"
 )
 
-const storageFilename = "data.json"
+const path = "data.json"
 const (
 	ExitCodeReadWrite = 1
 	ExitCodeUsage     = 2
 )
 
 func main() {
-	tasks, err := storage.ReadFromJson(storageFilename)
+	tasks, err := storage.ReadFromJson(path)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "read error: %v\n", err)
@@ -35,28 +35,33 @@ func main() {
 			fmt.Fprintf(os.Stderr, "add error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(path, tasks)
 	case "list":
-		commands.List(os.Stdout, tasks)
+		tasks, err := commands.List(tasks, args)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "add error: %s\n", err)
+			os.Exit(ExitCodeUsage)
+		}
+		tasks.List(os.Stdout)
 	case "update":
 		if err := commands.Update(tasks, args); err != nil {
 			fmt.Fprintf(os.Stderr, "update error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(path, tasks)
 	case "delete":
 		tasks, err := commands.Delete(tasks, args)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "delete error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(path, tasks)
 	case "mark":
 		if err := commands.Mark(tasks, args); err != nil {
 			fmt.Fprintf(os.Stderr, "mark error: %s\n", err)
 			os.Exit(ExitCodeUsage)
 		}
-		storage.WriteToJson(storageFilename, tasks)
+		storage.WriteToJson(path, tasks)
 	default:
 		fmt.Println("usage: task-cli [add|update|delete|mark|list]")
 		os.Exit(ExitCodeUsage)
