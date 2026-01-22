@@ -1,5 +1,7 @@
 # Task CLI
 
+Project URL: https://roadmap.sh/projects/task-tracker
+
 A simple CLI task manager written in Go.
 Allows you to add, update, delete, mark, and list tasks, storing them in a JSON file.
 
