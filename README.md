@@ -65,7 +65,7 @@ This will create a binary named task-cli.
 ### List all tasks
 
 ``` bash
-./task-cli list
+./task-cli list <backlog|ready|wip|done>
 ```
 
 ## Task Statuses

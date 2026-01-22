@@ -7,13 +7,6 @@ import (
 	"task-cli/src/task"
 )
 
-var stateMap = map[string]task.StatusState{
-	"backlog": task.StateBacklog,
-	"ready":   task.StateReady,
-	"wip":     task.StateInProgress,
-	"done":    task.StateDone,
-}
-
 func Mark(tasks task.Tasks, argv []string) error {
 	if len(argv) != 2 {
 		return fmt.Errorf("update usage: task-cli mark <id> [backlog|ready|wip|done]")
@@ -24,7 +17,7 @@ func Mark(tasks task.Tasks, argv []string) error {
 		return fmt.Errorf("error during parsing id: %w", err)
 	}
 
-	state, ok := stateMap[argv[1]]
+	state, ok := StateMap[argv[1]]
 	if !ok {
 		return fmt.Errorf("mark usage: task-cli mark <id> [backlog|ready|wip|done]")
 	}

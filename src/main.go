@@ -37,7 +37,12 @@ func main() {
 		}
 		storage.WriteToJson(path, tasks)
 	case "list":
-		commands.List(os.Stdout, tasks)
+		tasks, err := commands.List(tasks, args)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "add error: %s\n", err)
+			os.Exit(ExitCodeUsage)
+		}
+		tasks.List(os.Stdout)
 	case "update":
 		if err := commands.Update(tasks, args); err != nil {
 			fmt.Fprintf(os.Stderr, "update error: %s\n", err)
@@ -61,12 +66,4 @@ func main() {
 		fmt.Println("usage: task-cli [add|update|delete|mark|list]")
 		os.Exit(ExitCodeUsage)
 	}
-}
-
-func GetFile(filename string) (*os.File, error) {
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
-	if err != nil {
-		return nil, err
-	}
-	return f, nil
 }
